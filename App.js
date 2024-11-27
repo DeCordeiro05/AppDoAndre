@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TextInput, Button, ScrollView } from 'react-native';
 import TaskCard from './TaskCard';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getRequest } from './Api';
 
 export default function App() {
   const [taskTitle, setTaskTitle] = useState("");
@@ -49,6 +50,23 @@ export default function App() {
     updateTasks.splice(index, 1)
     setTask(updateTasks)
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+
+        const resp = await getRequest();
+        setTask(resp)
+
+      } catch (ex) {
+        console.error(ex)
+      }
+    };
+
+      fetchData();
+
+  }, [])
+
   return (
     <View style={styles.container}>
       <Text style={styles.label} >App de Tarefas</Text>
@@ -92,13 +110,13 @@ export default function App() {
 
       <ScrollView>
         {task.map((item, index) => (
-            <TaskCard
-              title={item.title}
-              description={item.description}
-              status={"Done"}
-              onClick={() => {deleteTask(index);}}
-            />
-          ))}
+          <TaskCard
+            title={item.title}
+            desc={item.description}
+            status={"Done"}
+            onClick={() => { deleteTask(index); }}
+          />
+        ))}
       </ScrollView>
     </View>
 
